@@ -2,7 +2,7 @@ import pygame as py
 
 #the font of everything in the game
 gamefont = "Calibri"
-
+print("James is taking over")
 #Value of clicks
 ClickValue = 1
 

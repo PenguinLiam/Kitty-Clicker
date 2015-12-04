@@ -1,5 +1,4 @@
 import pygame as py
-#import UpgradesTab
 
 #the font of everything in the game
 gamefont = "Calibri"
@@ -16,11 +15,11 @@ RCCost = 127000
 #Cost of Shops
 CLCost = 100
 PSCost = 500
-CBCost = 1500
-CTCost = 5000
-ECost = 60000
-FCost = 1000000
-CFCost = 100000000
+CBCost = 3000
+CTCost = 10000
+ECost = 40000
+FCost = 200000
+CFCost = 1000000
 QECost = 100000000000
 
 #Increase in cost of shops after purchase
@@ -301,7 +300,7 @@ class BackButton(py.sprite.Sprite):
         self.posy = 0
     def update(self):
         global page
-        self.rect = py.Rect(0, 0 + ((ScreenY / 9) * 8), 100, 100)
+        self.rect = py.Rect(0, 0 + ((ScreenY / 9) * 8), 100, (ScreenX / 9) - 5)
         font = py.font.SysFont(gamefont, 26)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
@@ -312,6 +311,28 @@ class BackButton(py.sprite.Sprite):
                 if event.type == py.MOUSEBUTTONDOWN:
                     if self.ID == "BACK":
                         page = 1
+                        
+class FactFiles(py.sprite.Sprite):
+    def __init__(self, text, ID, colour):
+        super().__init__()
+        self.text = text
+        self.ID = ID
+        self.colour = colour
+        self.posx = 100
+        self.posy = 100
+    def update(self):
+        self.rect = py.Rect(ScreenX / 6, 0 + ((ScreenY / 9) * 8), ScreenX / 3 * 2, (ScreenX / 9))
+        font = py.font.SysFont(gamefont, 26)
+        label = font.render(self.text, 1, black)
+        py.draw.rect(screen, self.colour, self.rect)
+        py.draw.rect(screen, black, self.rect, 1)
+        screen.blit(label, self.rect.center)
+        if self.rect.collidepoint(py.mouse.get_pos()):
+            for event in events:
+                if event.type == py.MOUSEBUTTONDOWN:
+                    if self.ID == "FF":
+                        page = 5
+        
 
 
 time = 0
@@ -353,6 +374,9 @@ TopTabs.add(Tabs(2, "Stats", "ST", (231, 230, 230)))
 TopTabs.add(Tabs(3, "Achievements", "AC", (231, 230, 230)))
 bbutton = py.sprite.Group()
 bbutton.add(BackButton("Back", "BACK", (231, 230, 230)))
+UTab = py.sprite.Group()
+UTab.add(FactFiles("Building Fact-Files", "FF", (146, 208, 80)))
+
 clock = py.time.Clock()
 py.time.set_timer(py.USEREVENT, 1000)
 page = 1
@@ -364,16 +388,18 @@ while True:
     events = []
     events = py.event.get()
     cps += CatLady
-    cps += PetStore * 5 #5 = amount per second added
+    cps += PetStore * 4 #5 = amount per second added
     cps += CatBreeder * 10
     cps += CatTrap * 40
-    cps += Ebay * 75
-    cps += Factory * 100
-    cps += CloningFacility * 250
-    cps += QMarkEMark * 1500
+    cps += Ebay * 100
+    cps += Factory * 400
+    cps += CloningFacility * 2000
+    cps += QMarkEMark * 50000
     fastcounter = cps / 60
     kittens += fastcounter
     kitens = kittens
+    screen.fill((149, 211, 232))
+    TopTabs.update()
     #print("CATLADY:", int(CatLady))
     #print("PETSTORE:", int(PetStore))
     #print("CATBREEDER:", int(CatBreeder))
@@ -385,8 +411,6 @@ while True:
     #print(round(kittens))
     #print("CATS/SEC:", int(cps))
     if page == 1: #Main
-        screen.fill((149, 211, 232))
-        TopTabs.update()
         k.Update()
         k.Draw()
         RButtons.update()
@@ -396,16 +420,13 @@ while True:
         cps = 0
         fastcounter = 0
     if page == 2: #Upgrades tab
-        screen.fill((149, 211, 232))
-        TopTabs.update()
         bbutton.update()
+        UTab.update()
     if page == 3: #Statistics tab
-        screen.fill((149, 211, 232))
-        TopTabs.update()
         bbutton.update()
     if page == 4: #Achievements tab
-        screen.fill((149, 211, 232))
-        TopTabs.update()
+        bbutton.update()
+    if page == 5:
         bbutton.update()
     hover()
     py.display.flip()

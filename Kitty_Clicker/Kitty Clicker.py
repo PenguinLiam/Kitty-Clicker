@@ -301,7 +301,7 @@ class BackButton(py.sprite.Sprite):
         self.colour = colour
         self.posx = ScreenX
         self.posy = ScreenY
-    def update(self)
+    def update(self):
         global page
         self.rect = py.Rect(self.posx, self.posy, self,posx, self,posy)
         self.rect = py.Rect(self.posx, self.posy, self,posx, self,posy)

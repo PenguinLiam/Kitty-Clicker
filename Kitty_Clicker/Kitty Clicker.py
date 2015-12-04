@@ -297,11 +297,11 @@ class BackButton(py.sprite.Sprite):
         self.text = text
         self.ID = ID
         self.colour = colour
-        self.posx = ScreenX / 3
+        self.posx = 0
         self.posy = 0
     def update(self):
         global page
-        self.rect = py.Rect(0, self.posy + ((ScreenY / 9) * 8))
+        self.rect = py.Rect(0, 0 + ((ScreenY / 9) * 8), 100, 100)
         font = py.font.SysFont(gamefont, 26)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
@@ -352,7 +352,7 @@ TopTabs.add(Tabs(1, "Upgrades", "UP", (231, 230, 230)))
 TopTabs.add(Tabs(2, "Stats", "ST", (231, 230, 230)))
 TopTabs.add(Tabs(3, "Achievements", "AC", (231, 230, 230)))
 bbutton = py.sprite.Group()
-bbutton.add(BackButton("Back", "BACK", (white)))
+bbutton.add(BackButton("Back", "BACK", (231, 230, 230)))
 clock = py.time.Clock()
 py.time.set_timer(py.USEREVENT, 1000)
 page = 1
@@ -396,17 +396,17 @@ while True:
         cps = 0
         fastcounter = 0
     if page == 2: #Upgrades tab
-        screen.fill((black))
+        screen.fill((149, 211, 232))
         TopTabs.update()
-        BackButton.update()
+        bbutton.update()
     if page == 3: #Statistics tab
-        screen.fill((black))
+        screen.fill((149, 211, 232))
         TopTabs.update()
-        BackButton.update()
-    if page == 2: #Achievements tab
-        screen.fill((black))
+        bbutton.update()
+    if page == 4: #Achievements tab
+        screen.fill((149, 211, 232))
         TopTabs.update()
-        BackButton.update()
+        bbutton.update()
     hover()
     py.display.flip()
 

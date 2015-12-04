@@ -303,7 +303,7 @@ class BackButton(py.sprite.Sprite):
     def update(self):
         global page
         self.rect = py.Rect(0, 0, ScreenX / 9, ScreenY / 3)
-        self.rect = py.Rect((self.posx - self.posx, self.posy, (ScreenX / 3), (ScreenY / 9))
+        self.rect = py.Rect((self.posx - self.posx, self.posy, (ScreenX / 3), (ScreenY / 9)))
         font = py.font.SysFont(gamefont, 26)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)

@@ -1,4 +1,5 @@
 import pygame as py
+#import UpgradesTab
 
 #the font of everything in the game
 gamefont = "Calibri"
@@ -296,14 +297,11 @@ class BackButton(py.sprite.Sprite):
         self.text = text
         self.ID = ID
         self.colour = colour
-        self.posx = ScreenX
-        self.posy = ScreenY
         self.posx = ScreenX / 3
         self.posy = 0
     def update(self):
         global page
-        self.rect = py.Rect(0, 0, ScreenX / 9, ScreenY / 3)
-        self.rect = py.Rect((self.posx - self.posx, self.posy, (ScreenX / 3), (ScreenY / 9)))
+        self.rect = py.Rect(0, self.posy + ((ScreenY / 9) * 8))
         font = py.font.SysFont(gamefont, 26)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
@@ -312,13 +310,13 @@ class BackButton(py.sprite.Sprite):
         if self.rect.collidepoint(py.mouse.get_pos()):
             for event in events:
                 if event.type == py.MOUSEBUTTONDOWN:
-                    if self.ID == "UP":
-                        page = 2
+                    if self.ID == "BACK":
+                        page = 1
 
 
 time = 0
 clicks = 0
-kittens = 10000
+kittens = 0
 CatLady = 0
 PetStore = 0
 CatBreeder = 0
@@ -353,8 +351,8 @@ TopTabs = py.sprite.Group()
 TopTabs.add(Tabs(1, "Upgrades", "UP", (231, 230, 230)))
 TopTabs.add(Tabs(2, "Stats", "ST", (231, 230, 230)))
 TopTabs.add(Tabs(3, "Achievements", "AC", (231, 230, 230)))
-BackButton = py.sprite.Group()
-BackButton.add(BackButton("Back", "BACK", (black)))
+bbutton = py.sprite.Group()
+bbutton.add(BackButton("Back", "BACK", (white)))
 clock = py.time.Clock()
 py.time.set_timer(py.USEREVENT, 1000)
 page = 1
@@ -397,15 +395,18 @@ while True:
         cpscounter()
         cps = 0
         fastcounter = 0
-    if page == 2: #Upgrades
+    if page == 2: #Upgrades tab
         screen.fill((black))
         TopTabs.update()
-    if page == 3: #Statistics
+        BackButton.update()
+    if page == 3: #Statistics tab
         screen.fill((black))
         TopTabs.update()
-    if page == 2: #Achievements
+        BackButton.update()
+    if page == 2: #Achievements tab
         screen.fill((black))
         TopTabs.update()
+        BackButton.update()
     hover()
     py.display.flip()
 

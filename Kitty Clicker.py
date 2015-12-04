@@ -2,7 +2,7 @@ import pygame as py
 
 #the font of everything in the game
 gamefont = "Calibri"
-
+print("James is taking over")
 #Value of clicks
 ClickValue = 1
 
@@ -273,6 +273,9 @@ class Tabs(py.sprite.Sprite):
         self.posy = 0
     def update(self):
         global page
+        global kittens
+        global clicks
+        global ClickValue
         self.rect = py.Rect(0, 0, ScreenX / 9, ScreenY / 3)
         self.rect = py.Rect((self.posx * self.ButtonNumber) - self.posx, self.posy, (ScreenX / 3), (ScreenY / 9))
         font = py.font.SysFont(gamefont, 28)
@@ -293,21 +296,15 @@ class Tabs(py.sprite.Sprite):
 class BackButton(py.sprite.Sprite):
     def __init__(self, text, ID, colour):
         super().__init__()
-        self.ButtonNumber = ButtonNumber
         self.text = text
         self.ID = ID
         self.colour = colour
-<<<<<<< HEAD
         self.posx = ScreenX
         self.posy = ScreenY
-=======
-        self.posx = ScreenX / 3
-        self.posy = 0
->>>>>>> refs/remotes/origin/master
-    def update(self):
+    def update(self)
         global page
-        self.rect = py.Rect(0, 0, ScreenX / 9, ScreenY / 3)
-        self.rect = py.Rect((self.posx - self.posx, self.posy, (ScreenX / 3), (ScreenY / 9))
+        self.rect = py.Rect(self.posx, self.posy, self,posx, self,posy)
+        self.rect = py.Rect(self.posx, self.posy, self,posx, self,posy)
         font = py.font.SysFont(gamefont, 28)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
@@ -316,8 +313,8 @@ class BackButton(py.sprite.Sprite):
         if self.rect.collidepoint(py.mouse.get_pos()):
             for event in events:
                 if event.type == py.MOUSEBUTTONDOWN:
-                    if self.ID == "UP":
-                        page = 2
+                    if self.ID == "BACK":
+                        page = 1
 
 
 time = 0

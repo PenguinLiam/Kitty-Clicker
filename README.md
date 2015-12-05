@@ -8,3 +8,6 @@ After this you have to merge the two branches:
   - merge
   - double click under remote tracking on origin/master
   - then you are done and okay to work on the files
+
+OR
+Alternatively, just right click on the repository, and click 'pull'. This is the same thing as fetching AND merging rolled into one.

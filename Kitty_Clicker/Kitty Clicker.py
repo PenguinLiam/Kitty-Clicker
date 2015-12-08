@@ -381,7 +381,7 @@ class SrollingFacts (py.sprite.Sprite):
         self.posx = 100
         self.posy = 100
     def update(self):
-        self.rect = py.Rect(self.posx, self.posy + ScrollY, ((ScreenX / 8) - ScreenX / 8), ScreenY / 7)
+        self.rect = py.Rect(self.posx, self.posy + ScrollY, (ScreenX / 8) * 5, ScreenY / 7)
         font = py.font.SysFont(gamefont, 26)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
@@ -433,7 +433,7 @@ UTab.add(FactFiles("Building Fact-Files", "BFF", (146, 208, 80)))
 ffbbutton = py.sprite.Group()
 ffbbutton.add(FFBackButton("Back", "BK", (231, 230, 230)))
 factfiles = py.sprite.Group()
-factfiles.add(SrollingFacts, 1, "this is a test", 1, black)
+factfiles.add(SrollingFacts(1, "this is a test", 1, white))
 
 clock = py.time.Clock()
 page = 1

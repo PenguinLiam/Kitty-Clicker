@@ -1,5 +1,7 @@
 import pygame as py
 import random
+from ScrollingExample import ScrollY
+from test.memory_watchdog import page_size
 
 #the font of everything in the game
 gamefont = "Calibri"
@@ -13,7 +15,7 @@ MCost = 20000
 BCost = 55000
 RCCost = 127000
 
-#Cost of Shops
+#Cost of Shops 
 CLCost = 100
 PSCost = 500
 CBCost = 3000
@@ -29,9 +31,10 @@ CostIncrease = 1.15
 #Increase in cost of upgrade after purchase
 UCostIncrease = 5.5
 
-#Screen Dimentions
+#Screen Dimentions/Scroll Stuff
 ScreenX = 640
 ScreenY = 480
+ScrollY = 0
 
 #Start of Game Code
 py.init()
@@ -282,6 +285,10 @@ class Tabs(py.sprite.Sprite):
         self.rect = py.Rect(0, 0, ScreenX / 9, ScreenY / 3)
         self.rect = py.Rect((self.posx * self.ButtonNumber) - self.posx, self.posy, (ScreenX / 3), (ScreenY / 9))
         font = py.font.SysFont(gamefont, 28)
+        if self.ID == page:
+            self.colour = (200, 220, 230)
+        else:
+            self.colour = (231, 230, 230)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
         py.draw.rect(screen, black, self.rect, 1)
@@ -289,11 +296,11 @@ class Tabs(py.sprite.Sprite):
         if self.rect.collidepoint(py.mouse.get_pos()):
             for event in events:
                 if event.type == py.MOUSEBUTTONDOWN:
-                    if self.ID == "UP":
+                    if self.ID == 2:
                         page = 2
-                    if self.ID == "ST":
+                    if self.ID == 3:
                         page = 3
-                    if self.ID == "AC":
+                    if self.ID == 4:
                         page = 4
 
 
@@ -364,7 +371,24 @@ class FactFiles(py.sprite.Sprite):
                 if event.type == py.MOUSEBUTTONDOWN:
                     if self.ID == "BFF":
                         page = 5
+                        
         
+class SrollingFacts (py.sprite.Sprite):
+    def __init__(self, ButtonNumber, text, ID, colour, posx, posy):
+        super().__init__()
+        self.ButtonNumber = ButtonNumber
+        self.text = text
+        self.ID = ID
+        self.colour = colour
+        self.posx = posx
+        self.posy = posy
+    def update(self):
+        self.rect = py.Rect(self.posx, self.posy + ScrollY, ((ScreenX / 8) - ScreenX / 8), ScreenY / 7)
+        font = py.font.SysFont(gamefont, 26)
+        label = font.render(self.text, 1, black)
+        py.draw.rect(screen, self.colour, self.rect)
+        py.draw.rect(screen, black, self.rect, 1)
+        screen.blit(label, self.rect)
 
 
 time = 0
@@ -387,7 +411,7 @@ RButtons.add(ShopButton(1, "Cat Lady", "CL", (255, 51, 0), " Spends her days col
 RButtons.add(ShopButton(2, "Pet Store", "PS", (255, 192, 0), " A place to go if you want affection! I spend| most of my life there!"))
 RButtons.add(ShopButton(3, "Cat Breeder", "CB", (255, 255, 0), " 'What happens when you mix a Tabby with a| Pursian?' - Steve 2015!"))
 RButtons.add(ShopButton(4, "Cat Trap", "CT", (146, 208, 80)," The Cat Lady's master contraption for| snatching their little kitty friends!"))
-RButtons.add(ShopButton(5, "Ebay", "E", (0, 176, 240), " Wait what? There is something very| wrong here...? "))
+RButtons.add(ShopButton(5, "eBay", "E", (0, 176, 240), " Wait what? There is something very| wrong here...? "))
 RButtons.add(ShopButton(6, "Factory", "F", (132, 236, 250)," Out of the steel works of Yorkshire come little| kittens in hard hats!"))
 RButtons.add(ShopButton(7, "Cloning Facility", "CF", (229, 117, 255), " Some say its unethical, but can you argue| with the cute meows of a army of kittens?"))
 RButtons.add(ShopButton(8, "?!?!", "?!", (249, 206, 250), " A Super-Massive-Cat-Magnet of alien creation| to harness the power of the meow!"))
@@ -401,15 +425,17 @@ LButtons.add(UpgradeButton(6, "TEMP.", "FO", (255, 255, 0)))
 LButtons.add(UpgradeButton(7, "TEMP.", "MS", (255, 192, 0)))
 LButtons.add(UpgradeButton(8, "TEMP.", "BM", (255, 51, 0)))
 TopTabs = py.sprite.Group()
-TopTabs.add(Tabs(1, "Upgrades", "UP", (231, 230, 230)))
-TopTabs.add(Tabs(2, "Stats", "ST", (231, 230, 230)))
-TopTabs.add(Tabs(3, "Achievements", "AC", (231, 230, 230)))
+TopTabs.add(Tabs(1, "Upgrades", 2, (231, 230, 230)))
+TopTabs.add(Tabs(2, "Statistics", 3, (231, 230, 230)))
+TopTabs.add(Tabs(3, "Achievements", 4, (231, 230, 230)))
 bbutton = py.sprite.Group()
 bbutton.add(BackButton("Back", "BACK", (231, 230, 230)))
 UTab = py.sprite.Group()
 UTab.add(FactFiles("Building Fact-Files", "BFF", (146, 208, 80)))
 ffbbutton = py.sprite.Group()
 ffbbutton.add(FFBackButton("Back", "BK", (231, 230, 230)))
+factfiles = py.sprite.group()
+factfiles.add(SrollingFacts, 1, "this is a test", 1, black)
 
 clock = py.time.Clock()
 page = 1
@@ -420,6 +446,9 @@ while True:
     py.event.pump()
     events = []
     events = py.event.get()
+    for event in events:
+        if event.type == py.QUIT:
+            py.quit()
     cps = 0
     fastcounter = 0
     cps += CatLady
@@ -461,12 +490,11 @@ while True:
         bbutton.update()
     if page == 5: #Fact-Files page
         ffbbutton.update()
+        factfiles.update()
     hover()
     py.display.flip()
 
 #fix upgrades to make them double cps
-#put counter into a rect
-#add box around centre kitty
 #add amount boxes
 #work out colour scheme for drop down boxes
 #add kitten silhouettes

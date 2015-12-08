@@ -1,5 +1,6 @@
 import pygame as py
 import random
+from cgitb import text
 
 #the font of everything in the game
 gamefont = "Calibri"
@@ -39,6 +40,7 @@ py.init()
 screen = py.display.set_mode((ScreenX, ScreenY))
 white = (255, 255, 255)
 black = (0, 0, 0)
+
 
 #Counter
 def counter():
@@ -83,16 +85,21 @@ class Kitty():
         screen.blit(image, self.rect)
 
 
+class Settings():
+    def __init__(self):
+        self.posx = posx
+        self.posy = posy
+
 #Upgrades on the left of the screen
 class UpgradeButton(py.sprite.Sprite):
     def __init__(self, ButtonNumber, text, ID, colour):
         super().__init__()
-        self.colour = colour
         self.posx = 0 #Start Position
         self.posy = ScreenY / 9
         self.ButtonNumber = ButtonNumber
         self.text = text
         self.ID = ID
+        self.colour = colour 
     def update(self):
         global ClickValue
         global kittens
@@ -108,6 +115,9 @@ class UpgradeButton(py.sprite.Sprite):
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
         py.draw.rect(screen, black, self.rect, 1)
+        tsize = font.size(self.text)
+        self.rect.centerx += (ScreenX - ScreenX / 1.15) / 2 - tsize[0] / 2
+        self.rect.centery += ((ScreenY / 9) * (self.ButtonNumber + 1) - (ScreenY / 9) * self.ButtonNumber) / 2 - tsize[1] / 2
         screen.blit(label, self.rect)
         if self.rect.collidepoint(py.mouse.get_pos()):
             for event in events:
@@ -176,16 +186,14 @@ class ShopButton(py.sprite.Sprite):
         elif self.ID == "?!":
             self.ttext = [" Cost: " + str(round(QECost))]
         self.ttext.extend(self.description.split("|"))
-        self.rect = py.Rect((ScreenX / 14) * 10.5, (ScreenY / 9) * self.ButtonNumber, ScreenX, (ScreenY / 9))
+        self.rect = py.Rect((ScreenX / 14) * 10, (ScreenY / 9) * self.ButtonNumber, ScreenX / 3.5, (ScreenY / 9))
         font = py.font.SysFont(gamefont, 22)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
         py.draw.rect(screen, black, self.rect, 1)
-        
         tsize = font.size(self.text)
-        self.rect.centerx += (ScreenX - self.posx)/2 - tsize[0]/2
-        self.rect.centery += ((ScreenY / 9) * (self.ButtonNumber + 1) - (ScreenY / 9) * self.ButtonNumber)/2 - tsize[1]/2
-        
+        self.rect.centerx += (ScreenX - self.posx) / 2 - tsize[0] / 2
+        self.rect.centery += ((ScreenY / 9) * (self.ButtonNumber + 1) - (ScreenY / 9) * self.ButtonNumber) / 2 - tsize[1] / 2
         screen.blit(label, self.rect)
         if self.rect.collidepoint(py.mouse.get_pos()):
             for event in events:
@@ -295,6 +303,9 @@ class Tabs(py.sprite.Sprite):
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
         py.draw.rect(screen, black, self.rect, 1)
+        tsize = font.size(self.text)
+        self.rect.centerx += (ScreenX - ScreenX / 1.5) / 2 - tsize[0] / 2
+        self.rect.centery += ((ScreenY / 9) * (self.ButtonNumber + 1) - (ScreenY / 9) * self.ButtonNumber) / 2 - tsize[1] / 2
         screen.blit(label, self.rect)
         if self.rect.collidepoint(py.mouse.get_pos()):
             for event in events:
@@ -317,7 +328,7 @@ class BackButton(py.sprite.Sprite):
         self.posy = 0
     def update(self):
         global page
-        self.rect = py.Rect((ScreenX / 6) - (ScreenX / 6), 0 + ((ScreenY / 9) * 8), (ScreenX / 6.4), (ScreenX / 9))
+        self.rect = py.Rect((ScreenX / 6) - (ScreenX / 6), 0 + ((ScreenY / 9) * 8), (ScreenX / 6.4), (ScreenY / 9))
         font = py.font.SysFont(gamefont, 26)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
@@ -340,7 +351,7 @@ class FFBackButton(py.sprite.Sprite):
         self.posy = 0
     def update(self):
         global page
-        self.rect = py.Rect((ScreenX / 6) - (ScreenX / 6), 0 + ((ScreenY / 9) * 8), (ScreenX / 6.4), (ScreenX / 9) - 5)
+        self.rect = py.Rect((ScreenX / 6) - (ScreenX / 6), 0 + ((ScreenY / 9) * 8), (ScreenX / 6.4), (ScreenY / 9))
         font = py.font.SysFont(gamefont, 26)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
@@ -363,7 +374,7 @@ class FactFiles(py.sprite.Sprite):
         self.posy = 100
     def update(self):
         global page
-        self.rect = py.Rect(ScreenX / 6, 0 + ((ScreenY / 9) * 8), ScreenX / 3 * 2, (ScreenX / 9))
+        self.rect = py.Rect(ScreenX / 6, 0 + ((ScreenY / 9) * 8), ScreenX / 3 * 2, (ScreenY / 9))
         font = py.font.SysFont(gamefont, 26)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
@@ -376,23 +387,33 @@ class FactFiles(py.sprite.Sprite):
                         page = 5
                         
         
-class SrollingFacts (py.sprite.Sprite):
+class ScrollingFacts (py.sprite.Sprite):
     def __init__(self, ButtonNumber, text, ID, colour):
         super().__init__()
         self.ButtonNumber = ButtonNumber
         self.text = text
         self.ID = ID
         self.colour = colour
-        self.posx = 100
-        self.posy = 100
+        self.posx = ScreenX / 6
+        self.posy = ScreenY / 5
     def update(self):
-        self.rect = py.Rect(self.posx, self.posy + ScrollY, (ScreenX / 8) * 5, ScreenY / 7)
+        self.rect = py.Rect(self.posx, (self.posy * self.ButtonNumber) + ScrollY, (ScreenX / 8) * 5, ScreenY / 6)
         font = py.font.SysFont(gamefont, 26)
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
         py.draw.rect(screen, black, self.rect, 1)
         screen.blit(label, self.rect)
-
+        
+class ScrollBar (py.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.posx = ScreenX * 0.9
+        self.posy = ScrollY
+        self.image = py.Surface((100, 100))
+        self.image.fill((100, 100, 100))
+        self.oldPos = None
+    def update(self):
+        print("TEST")
 
 time = 0
 clicks = 0
@@ -409,6 +430,7 @@ CatFood = 0
 cps = 0
 hovering = None
 k = Kitty(320, 240)
+s = ScrollBar()
 RButtons = py.sprite.Group()
 RButtons.add(ShopButton(1, "Cat Lady", "CL", (255, 51, 0), " Spends her days collecting cats, even if they| have an owner!"))
 RButtons.add(ShopButton(2, "Pet Store", "PS", (255, 192, 0), " A place to go if you want affection! I spend| most of my life there!"))
@@ -438,7 +460,10 @@ UTab.add(FactFiles("Building Fact-Files", "BFF", (146, 208, 80)))
 ffbbutton = py.sprite.Group()
 ffbbutton.add(FFBackButton("Back", "BK", (231, 230, 230)))
 factfiles = py.sprite.Group()
-factfiles.add(SrollingFacts(1, "this is a test", 1, white))
+factfiles.add(ScrollingFacts(1, "TEST 1", 1, white))
+factfiles.add(ScrollingFacts(2, "TEST 2", 1, white))
+factfiles.add(ScrollingFacts(3, "TEST 3", 1, white))
+factfiles.add(ScrollingFacts(4, "TEST 4", 1, white))
 
 clock = py.time.Clock()
 page = 1

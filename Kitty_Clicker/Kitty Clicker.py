@@ -1,7 +1,5 @@
 import pygame as py
 import random
-from ScrollingExample import ScrollY
-from test.memory_watchdog import page_size
 
 #the font of everything in the game
 gamefont = "Calibri"
@@ -374,14 +372,14 @@ class FactFiles(py.sprite.Sprite):
                         
         
 class SrollingFacts (py.sprite.Sprite):
-    def __init__(self, ButtonNumber, text, ID, colour, posx, posy):
+    def __init__(self, ButtonNumber, text, ID, colour):
         super().__init__()
         self.ButtonNumber = ButtonNumber
         self.text = text
         self.ID = ID
         self.colour = colour
-        self.posx = posx
-        self.posy = posy
+        self.posx = 100
+        self.posy = 100
     def update(self):
         self.rect = py.Rect(self.posx, self.posy + ScrollY, ((ScreenX / 8) - ScreenX / 8), ScreenY / 7)
         font = py.font.SysFont(gamefont, 26)
@@ -434,7 +432,7 @@ UTab = py.sprite.Group()
 UTab.add(FactFiles("Building Fact-Files", "BFF", (146, 208, 80)))
 ffbbutton = py.sprite.Group()
 ffbbutton.add(FFBackButton("Back", "BK", (231, 230, 230)))
-factfiles = py.sprite.group()
+factfiles = py.sprite.Group()
 factfiles.add(SrollingFacts, 1, "this is a test", 1, black)
 
 clock = py.time.Clock()

@@ -181,6 +181,11 @@ class ShopButton(py.sprite.Sprite):
         label = font.render(self.text, 1, black)
         py.draw.rect(screen, self.colour, self.rect)
         py.draw.rect(screen, black, self.rect, 1)
+        
+        tsize = font.size(self.text)
+        self.rect.centerx += (ScreenX - self.posx)/2 - tsize[0]/2
+        self.rect.centery += ((ScreenY / 9) * (self.ButtonNumber + 1) - (ScreenY / 9) * self.ButtonNumber)/2 - tsize[1]/2
+        
         screen.blit(label, self.rect)
         if self.rect.collidepoint(py.mouse.get_pos()):
             for event in events:

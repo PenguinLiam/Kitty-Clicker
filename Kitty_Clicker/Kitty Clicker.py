@@ -258,7 +258,7 @@ class ShopButton(py.sprite.Sprite):
         if self.rect.collidepoint(py.mouse.get_pos()):
             hovering = self.ttext
 
-
+#decides what is hovering 
 def hover():
     if hovering != None:
         trect = py.Rect((py.mouse.get_pos()[0] - 300, py.mouse.get_pos()[1]), (300, 53))
@@ -317,7 +317,7 @@ class Tabs(py.sprite.Sprite):
                     if self.ID == 4:
                         page = 4
 
-
+#the back button for going back to the home page from the tabs
 class BackButton(py.sprite.Sprite):
     def __init__(self, text, ID, colour):
         super().__init__()
@@ -340,7 +340,7 @@ class BackButton(py.sprite.Sprite):
                     if self.ID == "BACK":
                         page = 1
 
-
+#back button for thr fact files page
 class FFBackButton(py.sprite.Sprite):
     def __init__(self, text, ID, colour):
         super().__init__()
@@ -363,7 +363,7 @@ class FFBackButton(py.sprite.Sprite):
                     if self.ID == "BK":
                         page = 2
  
-                        
+#The fact files that are being scrolled     
 class FactFiles(py.sprite.Sprite):
     def __init__(self, text, ID, colour):
         super().__init__()
@@ -386,7 +386,7 @@ class FactFiles(py.sprite.Sprite):
                     if self.ID == "BFF":
                         page = 5
                         
-        
+#Fact files that scroll on the screen
 class ScrollingFacts (py.sprite.Sprite):
     def __init__(self, ButtonNumber, text, ID, colour):
         super().__init__()
@@ -403,18 +403,36 @@ class ScrollingFacts (py.sprite.Sprite):
         py.draw.rect(screen, self.colour, self.rect)
         py.draw.rect(screen, black, self.rect, 1)
         screen.blit(label, self.rect)
-        
+
+#the scroll bar for the fact files
 class ScrollBar (py.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.posx = ScreenX * 0.9
-        self.posy = ScrollY
+        self.posy = ScrollY / 9
         self.image = py.Surface((100, 100))
         self.image.fill((100, 100, 100))
         self.oldPos = None
     def update(self):
         print("TEST")
 
+#settings
+class Settings (py.sprite.Sprite):
+    def __init__(self, ButtonNumber, text, ID, colour):
+        super().__init__()
+        self.ButtonNumber = ButtonNumber
+        self.text = text
+        self.ID = ID
+        self.colour = colour
+    def update(self):
+        self.rect = py.Rect(self.posx, (self.posy * self.ButtonNumber) + ScrollY, (ScreenX / 8) * 5, ScreenY / 6)
+        font = py.font.SysFont(gamefont, 26)
+        label = font.render(self.text, 1, black)
+        py.draw.rect(screen, self.colour, self.rect)
+        py.draw.rect(screen, black, self.rect, 1)
+        screen.blit(label, self.rect)
+        
+#Definining variables
 time = 0
 clicks = 0
 kittens = 1000
@@ -468,6 +486,7 @@ factfiles.add(ScrollingFacts(4, "TEST 4", 1, white))
 clock = py.time.Clock()
 page = 1
 
+#Game Loop!
 while True:
     clock.tick(60)
     hovering = None
@@ -519,6 +538,8 @@ while True:
     if page == 5: #Fact-Files page
         ffbbutton.update()
         factfiles.update()
+    if page == 6: #settings
+        bbutton.update()
     hover()
     py.display.flip()
 
@@ -528,3 +549,4 @@ while True:
 #add kitten silhouettes
 #add a profile tab for different kittens and upgrades
 #dogs that appear and try to take your cats, and if you dont click them in a certain amount of time, they take a random percentage of your cats
+#finish settoings button (the buttons look the same as FactFiles)

@@ -1,6 +1,5 @@
 import pygame as py
 import random
-from cgitb import text
 
 #the font of everything in the game
 gamefont = "Calibri"
@@ -61,11 +60,10 @@ def cpscounter():
     pos = (posx - size[0] / 2, posy - size[1] / 5)
     label = font.render("Kittens/Sec: " + str(round(cps)), 1, black)
     screen.blit(label, pos)
-               
-                
+                       
 #Centre Kitten
 class Kitty():
-    def __init__(self, posx, posy):
+    def __init__(self):
         self.posx = ScreenX / 2.37 #Start point
         self.posy = ScreenY / 2 #Start point
         self.image = py.image.load("kitten.png")
@@ -84,11 +82,44 @@ class Kitty():
         image = py.transform.scale(self.image, (242, 209))
         screen.blit(image, self.rect)
 
-
+#settings button on the home screen
 class Settings():
     def __init__(self):
-        self.posx = posx
-        self.posy = posy
+        self.posx = ScreenX / 8 * 1.33
+        self.posy = (ScreenY / 18) * 17
+        self.image = py.image.load("Settings_Image.png")
+    def Update(self):
+        global page
+        self.rect = py.Rect(0, 0, 40, 40)
+        self.rect.center = (self.posx , self.posy)
+        if self.rect.collidepoint(py.mouse.get_pos()):
+            for event in events:
+                if event.type == py.MOUSEBUTTONDOWN:
+                    page = 6
+    def Draw(self):
+        image = py.transform.scale(self.image, (40, 40))
+        screen.blit(image, self.rect)
+
+#the actual settings that will be changed
+class The_Settings(py.sprite.Sprite):
+    def __init__(self, ButtonNumber, text, ID, colour):
+        super().__init__()
+        self.posx = 0 #Start Position
+        self.posy = ScreenY / 9
+        self.ButtonNumber = ButtonNumber
+        self.text = text
+        self.ID = ID
+        self.colour = colour
+    def update(self):
+        self.rect = py.Rect(self.posx, self.posy * self.ButtonNumber, ScreenX / 8, ScreenY / 9)
+        font = py.font.SysFont(gamefont, 22)
+        label = font.render(self.text, 1, black)
+        py.draw.rect(screen, self.colour, self.rect)
+        py.draw.rect(screen, black, self.rect, 1)
+        tsize = font.size(self.text)
+        self.rect.centerx += (ScreenX - ScreenX / 1.15) / 2 - tsize[0] / 2
+        self.rect.centery += ((ScreenY / 9) * (self.ButtonNumber + 1) - (ScreenY / 9) * self.ButtonNumber) / 2 - tsize[1] / 2
+        screen.blit(label, self.rect)
 
 #Upgrades on the left of the screen
 class UpgradeButton(py.sprite.Sprite):
@@ -134,7 +165,6 @@ class UpgradeButton(py.sprite.Sprite):
                             print("Too low")
                         elif kittens >= MCost:
                             print("Yeah")
-                    
                     
 #Shops on the right of screen
 class ShopButton(py.sprite.Sprite):
@@ -280,7 +310,6 @@ def hover():
             if textsize == 24:
                 textsize = 15
 
-
 #Tabs at the top of the screen
 class Tabs(py.sprite.Sprite):
     def __init__(self, ButtonNumber, text, ID, colour):
@@ -415,27 +444,11 @@ class ScrollBar (py.sprite.Sprite):
         self.oldPos = None
     def update(self):
         print("TEST")
-
-#settings
-class Settings (py.sprite.Sprite):
-    def __init__(self, ButtonNumber, text, ID, colour):
-        super().__init__()
-        self.ButtonNumber = ButtonNumber
-        self.text = text
-        self.ID = ID
-        self.colour = colour
-    def update(self):
-        self.rect = py.Rect(self.posx, (self.posy * self.ButtonNumber) + ScrollY, (ScreenX / 8) * 5, ScreenY / 6)
-        font = py.font.SysFont(gamefont, 26)
-        label = font.render(self.text, 1, black)
-        py.draw.rect(screen, self.colour, self.rect)
-        py.draw.rect(screen, black, self.rect, 1)
-        screen.blit(label, self.rect)
         
 #Definining variables
-time = 0
+page = 1
 clicks = 0
-kittens = 1000
+kittens = 1000000000
 CatLady = 0
 PetStore = 0
 CatBreeder = 0
@@ -447,7 +460,8 @@ QMarkEMark = 0
 CatFood = 0
 cps = 0
 hovering = None
-k = Kitty(320, 240)
+k = Kitty()
+settings = Settings()
 s = ScrollBar()
 RButtons = py.sprite.Group()
 RButtons.add(ShopButton(1, "Cat Lady", "CL", (255, 51, 0), " Spends her days collecting cats, even if they| have an owner!"))
@@ -482,9 +496,13 @@ factfiles.add(ScrollingFacts(1, "TEST 1", 1, white))
 factfiles.add(ScrollingFacts(2, "TEST 2", 1, white))
 factfiles.add(ScrollingFacts(3, "TEST 3", 1, white))
 factfiles.add(ScrollingFacts(4, "TEST 4", 1, white))
+ts = py.sprite.Group()
+ts.add(The_Settings(1, "TEST 1", 1, white))
+ts.add(The_Settings(2, "TEST 2", 1, white))
+ts.add(The_Settings(3, "TEST 3", 1, white))
+ts.add(The_Settings(4, "TEST 4", 1, white))
 
 clock = py.time.Clock()
-page = 1
 
 #Game Loop!
 while True:
@@ -524,6 +542,8 @@ while True:
     if page == 1: #Main
         k.Update()
         k.Draw()
+        settings.Update()
+        settings.Draw()
         RButtons.update()
         LButtons.update()
         counter()
@@ -540,13 +560,13 @@ while True:
         factfiles.update()
     if page == 6: #settings
         bbutton.update()
+        ts.update()
     hover()
     py.display.flip()
 
 #fix upgrades to make them double cps
 #add amount boxes
-#work out colour scheme for drop down boxes
 #add kitten silhouettes
 #add a profile tab for different kittens and upgrades
 #dogs that appear and try to take your cats, and if you dont click them in a certain amount of time, they take a random percentage of your cats
-#finish settoings button (the buttons look the same as FactFiles)
+#Make settings text and not in boxes

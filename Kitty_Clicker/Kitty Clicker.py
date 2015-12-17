@@ -30,8 +30,8 @@ CostIncrease = 1.15
 UCostIncrease = 5.5
 
 #Screen Dimentions/Scroll Stuff
-ScreenX = 640
-ScreenY = 480
+ScreenX = 800
+ScreenY = 500
 ScrollY = 0
 
 #Start of Game Code
@@ -76,8 +76,9 @@ class Kitty():
         if self.rect.collidepoint(py.mouse.get_pos()):
             for event in events:
                 if event.type == py.MOUSEBUTTONDOWN:
-                    kittens += ClickValue
-                    clicks += 1
+                    if py.mouse.get_pressed()[0]:
+                        kittens += ClickValue
+                        clicks += 1
     def Draw(self):
         image = py.transform.scale(self.image, (242, 209))
         screen.blit(image, self.rect)
@@ -171,7 +172,7 @@ class ShopButton(py.sprite.Sprite):
     def __init__(self, ButtonNumber, text, ID, colour, description):
         super().__init__()
         self.colour = colour
-        self.posx = 450
+        self.posx = 450 / 640 * ScreenX
         self.posy = ScreenY / 9 #Start Point
         self.ButtonNumber = ButtonNumber
         self.text = text
@@ -418,6 +419,7 @@ class FactFiles(py.sprite.Sprite):
 #Fact files that scroll on the screen
 class ScrollingFacts (py.sprite.Sprite):
     def __init__(self, ButtonNumber, text, ID, colour):
+        global ScrollY
         super().__init__()
         self.ButtonNumber = ButtonNumber
         self.text = text
@@ -443,12 +445,39 @@ class ScrollBar (py.sprite.Sprite):
         self.image.fill((100, 100, 100))
         self.oldPos = None
     def update(self):
-        print("TEST")
+        for event in events:
+            if event.type == py.MOUSEBUTTONDOWN:
+                print(event.button)
+        
+
+class ScrollButton (py.sprite.Sprite):
+    def __init__(self, num):
+        super().__init__()
+        self.image = py.Surface((20, 20))
+        self.image.fill((200, 0, 200))
+        self.num = num
+        if num == 1:
+            self.rect = py.Rect(620 / 640 * ScreenX, ScreenY / 9, 30 / 640 * ScreenX, 30 / 480 * ScreenY)
+        if num == 2:
+            self.rect = py.Rect(610 / 640 * ScreenX, 450 / 480 * ScreenY, 30 / 640 * ScreenX, 30 / 480 * ScreenY)
+    def update(self):
+        global ScrollY
+        screen.blit(self.image, self.rect)
+        if self.rect.collidepoint(py.mouse.get_pos()):
+            for event in events:
+                if event.type == py.MOUSEBUTTONDOWN:
+                    if self.num == 1:
+                        ScrollY += 1
+                    if self.num == 2:
+                        ScrollY -= 1
+        
+
+            
         
 #Definining variables
 page = 1
 clicks = 0
-kittens = 1000000000
+kittens = 0
 CatLady = 0
 PetStore = 0
 CatBreeder = 0
@@ -501,6 +530,10 @@ ts.add(The_Settings(1, "TEST 1", 1, white))
 ts.add(The_Settings(2, "TEST 2", 1, white))
 ts.add(The_Settings(3, "TEST 3", 1, white))
 ts.add(The_Settings(4, "TEST 4", 1, white))
+scrollButtons = py.sprite.Group()
+scrollButtons.add(ScrollButton(1))
+scrollButtons.add(ScrollButton(2))
+scrollButtons.add(ScrollBar())
 
 clock = py.time.Clock()
 
@@ -558,6 +591,8 @@ while True:
     if page == 5: #Fact-Files page
         ffbbutton.update()
         factfiles.update()
+        scrollButtons.update()
+        #scrollButtons.draw()
     if page == 6: #settings
         bbutton.update()
         ts.update()
